@@ -55,18 +55,22 @@
                   free = true;
               });
 
-              if(free) {
-                let hour = (Math.floor(occupiedFrom/4)+8);
-                hour = hour < 10 ? '0'+hour : hour;
-                let minute = (occupiedFrom%4)*15;
-                minute = minute < 10 ? '0'+minute : minute;
-                document.getElementById('tableBody').innerHTML += '<tr><td><a href="https://www7.ceda.polimi.it/spazi/spazi/controller/'+link+'">'+room+'</a></td><td>'+hour+':'+minute+'</td></tr>';
+              if(col < 52 && col >= 0) {
+                if(free) {
+                  let hour = (Math.floor(occupiedFrom/4)+8);
+                  hour = hour < 10 ? '0'+hour : hour;
+                  let minute = (occupiedFrom%4)*15;
+                  minute = minute < 10 ? '0'+minute : minute;
+                  document.getElementById('tableBody').innerHTML += '<tr><td><a href="https://www7.ceda.polimi.it/spazi/spazi/controller/'+link+'">'+room+'</a></td><td>'+hour+':'+minute+'</td></tr>';
+                } else {
+                  let hour = (Math.floor(freeFrom/4)+8);
+                  hour = hour < 10 ? '0'+hour : hour;
+                  let minute = (freeFrom%4)*15;
+                  minute = minute < 10 ? '0'+minute : minute;
+                  document.getElementById('tableBody2').innerHTML += '<tr><td><a href="https://www7.ceda.polimi.it/spazi/spazi/controller/'+link+'">'+room+'</a></td><td>'+hour+':'+minute+'</td></tr>';
+                }
               } else {
-                let hour = (Math.floor(freeFrom/4)+8);
-                hour = hour < 10 ? '0'+hour : hour;
-                let minute = (freeFrom%4)*15;
-                minute = minute < 10 ? '0'+minute : minute;
-                document.getElementById('tableBody2').innerHTML += '<tr><td><a href="https://www7.ceda.polimi.it/spazi/spazi/controller/'+link+'">'+room+'</a></td><td>'+hour+':'+minute+'</td></tr>';
+                document.getElementById('tableBody2').innerHTML += '<tr><td><a href="https://www7.ceda.polimi.it/spazi/spazi/controller/'+link+'">'+room+'</a></td><td>Closed</td></tr>';
               }
             }
           }
