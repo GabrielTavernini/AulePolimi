@@ -2,6 +2,9 @@
   <head>
     <title>Empty Rooms Polimi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
@@ -16,9 +19,25 @@
         }
       }
 
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+      const loc = params.location || 'MIA';
+      
+      console.log(loc);
+      $(document).ready( function () {
+        $("#locationSelector").val(loc).change();
+        $("#locationSelector").on('change', function () {
+            let newLoc = $(this).val();
+            console.log(newLoc);
+            window.location = window.location.href.split('?')[0] + '?location='+newLoc;
+            return false;
+        });
+      });
+
+
       let date = new Date();
       let col = (date.getHours() - 8) * 4 + Math.ceil(date.getMinutes()/15);
-      let url = 'https://www7.ceda.polimi.it/spazi/spazi/controller/OccupazioniGiornoEsatto.do?csic=MIA&categoria=tutte&tipologia=tutte&giorno_day='+date.getDate()+'&giorno_month='+(date.getMonth()+1)+'&giorno_year='+date.getFullYear()+'&jaf_giorno_date_format=dd%2FMM%2Fyyyy&evn_visualizza=';
+      let url = 'https://www7.ceda.polimi.it/spazi/spazi/controller/OccupazioniGiornoEsatto.do?csic='+loc+'&categoria=tutte&tipologia=tutte&giorno_day='+date.getDate()+'&giorno_month='+(date.getMonth()+1)+'&giorno_year='+date.getFullYear()+'&jaf_giorno_date_format=dd%2FMM%2Fyyyy&evn_visualizza=';
       fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
       .then(res => res.text()).then((html) => {
         let rows = html.split('<tr');
@@ -76,14 +95,19 @@
           }
         });
         
-        $(document).ready( function () {
-          $('#myTable').DataTable({
-            paging: false,
-            ordering:  false
-          });
-        });
 
         $(document).ready( function () {
+          $('#spinner').toggleClass('d-none');
+          $('#spinner2').toggleClass('d-none');
+          $('#myTable').toggleClass('d-none');
+          $('#myTable2').toggleClass('d-none');
+
+          $('#myTable').DataTable({
+            paging: false,
+            search: false,
+            ordering:  false
+          });
+
           $('#myTable2').DataTable({
             paging: false,
             "order": [[ 1, "asc" ]]
@@ -93,9 +117,45 @@
       
     </script>
   </head>
-  <body class="p-2">
+  <body class="p-2 text-center">
+    <select id="locationSelector" class="form-select mb-4 text-center" aria-label="Polimi location selector">
+      <option class="" value="COE">Como</option>
+      <option class="" value="COE04">Como - Via Anzani</option>
+      <option class="" value="COE02">Como - Via Castelnuovo</option>
+      <option class="" value="COE03">Como - Via Valleggio</option>
+      <option class="" value="COE08">Como - Via Zezio</option>
+      <option class="" value="CRG">Cremona</option>
+      <option class="" value="CRG01">Cremona - Via Sesto</option>
+      <option class="" value="LCF" selected="selected">Lecco</option>
+      <option class="" value="LCF04">Lecco - Via Ghislanzoni</option>
+      <option class="" value="MNI">Mantova</option>
+      <option class="" value="MNI01">Mantova - Via Scarsellini 15</option>
+      <option class="" value="MNI02">Mantova - Via Scarsellini 2</option>
+      <option class="" value="MIB">Milano Bovisa</option>
+      <option class="" value="MIB02">Milano Bovisa - Via Durando</option>
+      <option class="" value="MIB01">Milano Bovisa - Via La Masa</option>
+      <option class="" value="MIA">Milano Città Studi</option>
+      <option class="" value="MIA11">Milano Città Studi - Piazza Leonardo da Vinci 26</option>
+      <option class="" value="MIA01">Milano Città Studi - Piazza Leonardo da Vinci 32</option>
+      <option class="" value="MIA03">Milano Città Studi - Via Bassini</option>
+      <option class="" value="MIA02">Milano Città Studi - Via Bonardi</option>
+      <option class="" value="MIA06">Milano Città Studi - Via Colombo 40</option>
+      <option class="" value="MIA07">Milano Città Studi - Via Colombo 81</option>
+      <option class="" value="MIA14">Milano Città Studi - Via Golgi 20</option>
+      <option class="" value="MIA04">Milano Città Studi - Via Golgi 40</option> 
+      <option class="" value="MIA05">Milano Città Studi - Via Mancinelli</option>
+      <option class="" value="MIA15">Milano Città Studi - Via Pascoli 70</option>
+      <option class="" value="MIA09">Milano Città Studi - Viale Romagna</option>
+      <option class="" value="PCL">Piacenza</option>
+      <option class="" value="PCL04">Piacenza - Via Scalabrini 113</option>
+      <option class="" value="PCL01">Piacenza - Via Scalabrini 76</option>
+    </select>
+
     <h1>Empty Rooms</h1>
-    <table id="myTable" class="display">
+    <div id="spinner" class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <table id="myTable" class="d-none">
       <thead>
           <tr>
               <th>Room</th>
@@ -107,7 +167,10 @@
     </table>
     <div style="height: 30px;"></div>
     <h1>Occupied Rooms</h1>
-    <table id="myTable2" class="display">
+    <div id="spinner2" class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <table id="myTable2" class="d-none">
       <thead>
           <tr>
               <th>Room</th>
