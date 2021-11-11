@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+
+    <script>
+      function textBetween(str, a, b, offset = 0) {
+        try {
+          return str.split(a)[1+offset].split(b)[0];
+        } catch(e) {
+          return '';
+        }
+      }
+
+      let date = new Date();
+      let col = (date.getHours() - 8) * 4 + Math.ceil(date.getMinutes()/15);
+      fetch('https://www7.ceda.polimi.it/spazi/spazi/controller/OccupazioniGiornoEsatto.do?csic=MIA&categoria=tutte&tipologia=tutte&giorno_day='+date.getDate()+'&giorno_month='+(date.getMonth()+1)+'&giorno_year='+date.getFullYear()+'&jaf_giorno_date_format=dd%2FMM%2Fyyyy&evn_visualizza=')
+      .then(res => res.text()).then((html) => {
+        let rows = html.split('<tr');
+        rows.forEach(row => {
+          if(row.includes('normalRow')) {
+            let columns = row.split('</td>');
+            let room = textBetween(columns[1], '"> ', ' </a>', 1);
+            let link = textBetween(columns[1], 'href="', '">');
+            
+            if(room != '') {
+              let spot = 0;
+              let free = false;
+              let freeFrom = 99;
+              let occupiedFrom = 99;
+
+              columns.forEach(column => {
+                let prevSpot = spot;
+                let empty = column.includes('empty');
+                if(column.includes('slot')) {
+                  spot += parseInt(textBetween(column, 'colspan="', '">'));
+                } else if(empty) {
+                  spot++;
+                }
+
+                if(spot > col) {
+                  if(empty && spot < freeFrom)
+                    freeFrom = prevSpot;
+                  
+                  if(!empty && spot < occupiedFrom)
+                    occupiedFrom = prevSpot;
+                }
+
+                if(col <= spot && col > prevSpot && empty)
+                  free = true;
+              });
+
+              if(free) {
+                let hour = (Math.floor(occupiedFrom/4)+8);
+                hour = hour < 10 ? '0'+hour:hour;
+                let minute = (occupiedFrom%4)*15;
+                minute = minute < 10 ? '0'+minute:minute;
+                document.getElementById('tableBody').innerHTML += '<tr><td><a href="https://www7.ceda.polimi.it/spazi/spazi/controller/'+link+'">'+room+'</a></td><td>'+hour+':'+minute+'</td></tr>';
+              }
+            }
+          }
+        });
+        
+        $(document).ready( function () {
+          $('#myTable').DataTable({
+            paging: false,
+            ordering:  false
+          });
+        });
+      });
+      
+    </script>
+  </head>
+  <body class="p-2">
+    <table id="myTable" class="display">
+      <thead>
+          <tr>
+              <th>Room</th>
+              <th>Empty Until</th>
+          </tr>
+      </thead>
+      <tbody id="tableBody">
+      </tbody>
+  </table>
+  </body>
+</html>
