@@ -1,6 +1,8 @@
 <html>
   <head>
     <title>Empty Rooms Polimi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
@@ -59,6 +61,12 @@
                 let minute = (occupiedFrom%4)*15;
                 minute = minute < 10 ? '0'+minute : minute;
                 document.getElementById('tableBody').innerHTML += '<tr><td><a href="https://www7.ceda.polimi.it/spazi/spazi/controller/'+link+'">'+room+'</a></td><td>'+hour+':'+minute+'</td></tr>';
+              } else {
+                let hour = (Math.floor(freeFrom/4)+8);
+                hour = hour < 10 ? '0'+hour : hour;
+                let minute = (freeFrom%4)*15;
+                minute = minute < 10 ? '0'+minute : minute;
+                document.getElementById('tableBody2').innerHTML += '<tr><td><a href="https://www7.ceda.polimi.it/spazi/spazi/controller/'+link+'">'+room+'</a></td><td>'+hour+':'+minute+'</td></tr>';
               }
             }
           }
@@ -70,11 +78,19 @@
             ordering:  false
           });
         });
+
+        $(document).ready( function () {
+          $('#myTable2').DataTable({
+            paging: false,
+            "order": [[ 1, "asc" ]]
+          });
+        });
       });
       
     </script>
   </head>
   <body class="p-2">
+    <h1>Empty Rooms</h1>
     <table id="myTable" class="display">
       <thead>
           <tr>
@@ -84,6 +100,18 @@
       </thead>
       <tbody id="tableBody">
       </tbody>
-  </table>
+    </table>
+    <div style="height: 30px;"></div>
+    <h1>Occupied Rooms</h1>
+    <table id="myTable2" class="display">
+      <thead>
+          <tr>
+              <th>Room</th>
+              <th>Occupied Until</th>
+          </tr>
+      </thead>
+      <tbody id="tableBody2">
+      </tbody>
+    </table>
   </body>
 </html>
