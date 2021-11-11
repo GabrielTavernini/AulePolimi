@@ -44,7 +44,7 @@
         rows.forEach(row => {
           if(row.includes('normalRow')) {
             let columns = row.split('</td>');
-            let room = textBetween(columns[1], '"> ', ' </a>', 1);
+            let room = textBetween(columns[1], '"> ', ' </a>', 1).replace('�', '°');
             let link = textBetween(columns[1], 'href=\\"', '\\">');
             
             if(room != '') {
@@ -155,7 +155,7 @@
     <div id="spinner" class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
-    <table id="myTable" class="d-none">
+    <table id="myTable" class="d-none display">
       <thead>
           <tr>
               <th>Room</th>
@@ -170,7 +170,7 @@
     <div id="spinner2" class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
-    <table id="myTable2" class="d-none">
+    <table id="myTable2" class="d-none display">
       <thead>
           <tr>
               <th>Room</th>
