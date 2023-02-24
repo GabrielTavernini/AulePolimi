@@ -43,7 +43,7 @@
       let date = new Date();
       let col = (date.getHours() - 8) * 4 + Math.ceil(date.getMinutes()/15);
       let url = 'https://www7.ceda.polimi.it/spazi/spazi/controller/OccupazioniGiornoEsatto.do?csic='+loc+'&categoria=tutte&tipologia=tutte&giorno_day='+date.getDate()+'&giorno_month='+(date.getMonth()+1)+'&giorno_year='+date.getFullYear()+'&jaf_giorno_date_format=dd%2FMM%2Fyyyy&evn_visualizza=';
-      fetch(`http://ec2-15-160-196-207.eu-south-1.compute.amazonaws.com:8080/${url}`)
+      fetch(`https://ec2-18-102-11-80.eu-south-1.compute.amazonaws.com:8443/${url}`)
       .then(res => res.text()).then((html) => {
         let rows = html.split('<tr');
         rows.forEach(row => {
