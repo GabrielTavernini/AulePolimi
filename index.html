@@ -43,14 +43,14 @@
       let date = new Date();
       let col = (date.getHours() - 8) * 4 + Math.ceil(date.getMinutes()/15);
       let url = 'https://www7.ceda.polimi.it/spazi/spazi/controller/OccupazioniGiornoEsatto.do?csic='+loc+'&categoria=tutte&tipologia=tutte&giorno_day='+date.getDate()+'&giorno_month='+(date.getMonth()+1)+'&giorno_year='+date.getFullYear()+'&jaf_giorno_date_format=dd%2FMM%2Fyyyy&evn_visualizza=';
-      fetch(`https://ec2-18-102-11-80.eu-south-1.compute.amazonaws.com:8443/${url}`)
+      fetch(`https://corsproxy.io/?${url}`)
       .then(res => res.text()).then((html) => {
         let rows = html.split('<tr');
         rows.forEach(row => {
           if(row.includes('normalRow')) {
             let columns = row.split('</td>');
             let room = textBetween(columns[1], '"> ', ' </a>', 1).replace('�', '°');
-            let link = textBetween(columns[1], 'href=\\"', '\\">');
+            let link = textBetween(columns[1], 'href="', '">');
             
             if(room != '') {
               let spot = 0;
@@ -62,7 +62,7 @@
                 let prevSpot = spot;
                 let empty = column.includes('empty');
                 if(column.includes('slot')) {
-                  spot += parseInt(textBetween(column, 'colspan=\\"', '\\">'));
+                  spot += parseInt(textBetween(column, 'colspan="', '">'));
                 } else if(empty) {
                   spot++;
                 }
